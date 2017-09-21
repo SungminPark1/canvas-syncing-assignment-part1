@@ -2,12 +2,49 @@
 <html lang="en">
 <head>
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
-    <script type="text/babel" >
-        "use strict";
-    
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" >
+      "use strict";
+      const socket;
+      const myNum = 0;
+
+      const setupSocket = () => {
+        socket.emit('join');
+
+        socket.on('updatePara', (data) => {
+          console.log(data);
+
+          const message = data.message;
+          document.querySelector("#myPara").innerHTML = `Client value: ${myNum}
+          Server Value ${message}`;
+        });
+
+        socket.on('clearPara', (data) => {
+          document.querySelector('#myPara').innerHTML = '';
+        });
+      };
+
+      const sendMessage = () => {
+        myNum += 5;
+
+        var messageData = {
+          message: 5,
+        };
+
+        socket.emit('updatePara', messageData);
+      };
+
+      const init = () => {
+        socket = io.connect();
+        setupSocket();
+      };
+
+      setInterval(sendMessage, 3000);
+
+      window.onload = init;
     </script>
 </head>
 <body>
-
+  <p id="myPara">client value: 0 </br> Server value: </p>
 </body>
 </html>
